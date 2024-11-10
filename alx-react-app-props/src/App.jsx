@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ProfilePage from "./components/ProfilePage";
-import UserContext from "./UserContext";
+import UserContext from "./components/UserContext";
 
 function App() {
   // Example user data
