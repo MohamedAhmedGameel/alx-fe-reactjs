@@ -1,36 +1,37 @@
 // src/store/recipeStore.js
 
-import create from "zustand";
+import create from 'zustand';
 
-const useRecipeStore = create((set) => ({
+const useRecipeStore = create(set => ({
   recipes: [],
-    searchTerm: '',
-  setSearchTerm: (term) => set({ searchTerm: term }),
-  filteredRecipes: [],
-  filterRecipes: () => set(state => ({
-    filteredRecipes: state.recipes.filter(recipe =>
-      recipe.title.toLowerCase().includes(state.searchTerm.toLowerCase())
-    )})),
+  favorites: [], // Array to store favorite recipe IDs
+  recommendations: [], // Array to store recommended recipes
 
-  
-  // Add a new recipe
-  addRecipe: (newRecipe) =>
-    set((state) => ({ recipes: [...state.recipes, newRecipe] })),
-  
-  // Set multiple recipes (e.g., when fetching from an API)
+  // Action to add a recipe to favorites
+  addFavorite: (recipeId) => set(state => ({
+    favorites: [...state.favorites, recipeId],
+  })),
+
+  // Action to remove a recipe from favorites
+  removeFavorite: (recipeId) => set(state => ({
+    favorites: state.favorites.filter(id => id !== recipeId),
+  })),
+
+  // Generate personalized recommendations based on favorite recipes
+  generateRecommendations: () => set(state => {
+    // Simple recommendation logic based on the user's favorites
+    const recommended = state.recipes.filter(recipe =>
+      state.favorites.includes(recipe.id) && Math.random() > 0.5
+    );
+    return { recommendations: recommended };
+  }),
+
+  // Set recipes data
   setRecipes: (recipes) => set({ recipes }),
 
-  // Update an existing recipe
-  updateRecipe: (updatedRecipe) => set((state) => ({
-    recipes: state.recipes.map((recipe) =>
-      recipe.id === updatedRecipe.id ? updatedRecipe : recipe
-    ),
-  })),
+  // Set favorites data (if needed for external sources)
+  setFavorites: (favorites) => set({ favorites }),
 
-  // Delete a recipe by ID
-  deleteRecipe: (id) => set((state) => ({
-    recipes: state.recipes.filter((recipe) => recipe.id !== id),
-  })),
 }));
 
 export default useRecipeStore;
