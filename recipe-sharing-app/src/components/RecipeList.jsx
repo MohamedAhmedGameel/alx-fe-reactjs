@@ -1,36 +1,32 @@
-// src/components/RecipeList.jsx
-
-import React from "react";
-import { useRecipeStore } from "../store/recipeStore";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import useRecipeStore from '../recipeStore';
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const RecipeList = () => {
-  // Get filtered recipes from Zustand store
-  const filteredRecipes = useRecipeStore((state) => state.filteredRecipes);
-
-  // If no filtered results, show all recipes
-  const recipes =
-    filteredRecipes.length > 0
-      ? filteredRecipes
-      : useRecipeStore((state) => state.recipes);
-
-  return (
-    <div className="recipe-list">
-      {recipes.length > 0 ? (
-        recipes.map((recipe) => (
-          <div className="recipe-card" key={recipe.id}>
-            <h3>{recipe.title}</h3>
-            <p>{recipe.description}</p>
-            <Link to={`/recipe/${recipe.id}`} className="view-recipe-link">
-              View Recipe
-            </Link>
-          </div>
-        ))
-      ) : (
-        <p>No recipes found.</p>
-      )}
-    </div>
-  );
+    const recipes = useRecipeStore((state) => state.recipes);
+    const filteredRecipes = useRecipeStore((state) => state.filteredRecipes); // Access filteredRecipes from Zustand store
+    return (
+        <div>
+            {recipes.map((recipe) => (
+                <div key={recipe.id}>
+                    <h3>{recipe.title}</h3>
+                    <p>{recipe.description}</p>
+                </div>
+            ))}
+            {filteredRecipes.length > 0 ? (
+                filteredRecipes.map((recipe) => (
+                    <div key={recipe.id}>
+                        <h3>
+                            {/* Use Link to navigate to the recipe details page */}
+                            <Link to={`/recipe/${recipe.id}`}>{recipe.title}</Link>
+                        </h3>
+                        <p>{recipe.description}</p>
+                    </div>
+                ))
+            ) : (
+                <p>No recipes found.</p> // Message when no filtered results exist
+            )}
+        </div>
+    );
 };
 
 export default RecipeList;

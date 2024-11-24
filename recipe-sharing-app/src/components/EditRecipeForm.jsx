@@ -1,64 +1,42 @@
-// src/components/EditRecipeForm.js
-
-import { useState } from "react";
-import { useRecipeStore } from "../store/recipeStore";
+import { useState } from 'react'; // Import only what's needed
+import PropTypes from 'prop-types';
+import useRecipeStore from './recipeStore';
 
 const EditRecipeForm = ({ recipe }) => {
-  const [title, setTitle] = useState(recipe.title);
-  const [description, setDescription] = useState(recipe.description);
-  const [ingredients, setIngredients] = useState(recipe.ingredients.join(", "));
-  const [instructions, setInstructions] = useState(recipe.instructions);
+    const updateRecipe = useRecipeStore((state) => state.updateRecipe);
+    const [title, setTitle] = useState(recipe.title);
+    const [description, setDescription] = useState(recipe.description);
 
-  const updateRecipe = useRecipeStore((state) => state.updateRecipe);
+    const handleSubmit = (event) => {
+        event.preventDefault(); // Prevent default form submission
+        updateRecipe({ ...recipe, title, description });
+    };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    updateRecipe({
-      ...recipe,
-      title,
-      description,
-      ingredients: ingredients
-        .split(",")
-        .map((ingredient) => ingredient.trim()),
-      instructions,
-    });
-  };
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Title"
+            />
+            <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Description"
+            />
+            <button type="submit">Update Recipe</button>
+        </form>
+    );
+};
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Ingredients (comma-separated)</label>
-        <input
-          type="text"
-          value={ingredients}
-          onChange={(e) => setIngredients(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Instructions</label>
-        <textarea
-          value={instructions}
-          onChange={(e) => setInstructions(e.target.value)}
-        />
-      </div>
-      <button type="submit">Save Changes</button>
-    </form>
-  );
+// Add PropTypes validation
+EditRecipeForm.propTypes = {
+    recipe: PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        title: PropTypes.string.isRequired,
+        description: PropTypes.string.isRequired,
+    }).isRequired,
 };
 
 export default EditRecipeForm;
